@@ -5,14 +5,22 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net"
-	"strings"
-	"time"
+	"os"
 )
 
 // hardcoded address to keep things simple
 // const Address = "data.salad.com:5000"
-const Address = "localhost:5000"
+var Address = "localhost:5000"
+
+// inject server address into process environment for production config
+func init() {
+	address := os.Getenv("SERVER_ADDRESS")
+	if address != "" {
+		Address = address
+	}
+}
 
 // main loop
 func main() {
