@@ -17,6 +17,12 @@ type message struct {
 	latitude, longitude, altitude, temperature float64
 }
 
+////////
+// 'AIR' formatted binary packets
+// Implement standard binary interfaces to future proof a bit.
+
+// UnmarshalBinary AIR binary packet into the message struct
+// Wordy on purpose to make the layout very obvious.
 func (m *message) UnmarshalBinary(data []byte) error {
 	if len(data) < 3 {
 		return fmt.Errorf("message unmarhsal binary: no data")
