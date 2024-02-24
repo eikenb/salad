@@ -9,6 +9,7 @@ import (
 	"log/slog"
 	"net"
 	"os"
+	"time"
 )
 
 // hardcoded address to keep things simple
@@ -37,6 +38,7 @@ func main() {
 func dialLoop(ctx context.Context, addr string, output func(message)) {
 	d := new(net.Dialer)
 	buf := new(bufio.Reader)
+	attempt := 0
 	for {
 		// connect to server via tcp
 		conn, err := d.DialContext(ctx, "tcp", addr)
@@ -46,9 +48,9 @@ func dialLoop(ctx context.Context, addr string, output func(message)) {
 			return // ie. exit (dialer's context cancelled via signal)
 		case err != nil:
 			slog.Info("DialContext", "error", err)
+			attempt = backoff(attempt) // very simple exponential backoff
 			continue
 		}
-		defer conn.Close()
 		// wait for data
 		// receive data in buffer
 		buf.Reset(conn)
@@ -63,6 +65,15 @@ func dialLoop(ctx context.Context, addr string, output func(message)) {
 		msg.UnmarshalBinary(data)
 		// pretty print struct
 		output(*msg)
-		// loop
+		// end loop, reset attempts and close this connection
+		attempt = 0
+		conn.Close()
 	}
+}
+
+// retry with backoff
+func backoff(attempt int) int {
+	wait := time.Second * time.Duration(attempt*attempt)
+	time.Sleep(wait)
+	return attempt + 1
 }
