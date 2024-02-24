@@ -134,6 +134,7 @@ func (m message) MarshalBinary() ([]byte, error) {
 
 var order = binary.BigEndian
 
+// extendMsg returns a `[]byte` slice extended with the `encode`d data
 func extendMsg(msg []byte, data any) ([]byte, error) {
 	bs, err := encode(data)
 	if err != nil {
@@ -143,6 +144,7 @@ func extendMsg(msg []byte, data any) ([]byte, error) {
 
 }
 
+// encode's the data into a `[]byte` slice
 func encode(data any) ([]byte, error) {
 	buf := new(bytes.Buffer)
 	err := binary.Write(buf, order, data)
