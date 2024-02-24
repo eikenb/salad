@@ -23,6 +23,24 @@ var testMessages []message = []message{
 		altitude:     16895.5,
 		temperature:  -13.2,
 	},
+	{
+		tail_number:  "N20907",
+		engine_count: 4,
+		engine_name:  "GEnx-1C",
+		latitude:     -3.31593389482026,
+		longitude:    17.12425341290001,
+		altitude:     7032.5,
+		temperature:  0.2,
+	},
+	{
+		tail_number:  "",
+		engine_count: 0,
+		engine_name:  "",
+		latitude:     0,
+		longitude:    0,
+		altitude:     0,
+		temperature:  0,
+	},
 }
 
 func TestBinaryMarshaling(t *testing.T) {
