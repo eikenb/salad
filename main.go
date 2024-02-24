@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"log/slog"
+	"math/rand/v2"
 	"net"
 	"os"
 	"time"
@@ -13,6 +14,8 @@ import (
 
 // const Address = "data.salad.com:5000"
 var Address = "localhost:5000"
+var maxBackoff = 7 // ~5 sec max w/ 100ms base
+var baseBackoff = time.Millisecond * 100
 
 var retryErr = errors.New("retry")
 
@@ -34,7 +37,7 @@ func main() {
 		case context.Canceled:
 			return
 		case retryErr:
-			attempt = backoff(attempt)
+			attempt = backoff(ctx, attempt)
 			continue
 		}
 		attempt = 0
@@ -42,10 +45,17 @@ func main() {
 	}
 }
 
-// backoff implements a super simple exponential backoff
-func backoff(attempt int) int {
-	wait := time.Second * time.Duration(attempt*attempt)
-	time.Sleep(wait)
+// backoff implements a simple exponential backoff
+func backoff(ctx context.Context, attempt int) int {
+	if attempt >= maxBackoff {
+		attempt = maxBackoff - 1
+	}
+	jitter := time.Duration(rand.Float64() * float64(baseBackoff))
+	wait := (baseBackoff * time.Duration(attempt*attempt)) + jitter
+	select {
+	case <-time.After(wait):
+	case <-ctx.Done():
+	}
 	return attempt + 1
 }
 
