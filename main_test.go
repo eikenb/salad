@@ -9,28 +9,25 @@ import (
 	"testing"
 )
 
-func TestDialLoop(t *testing.T) {
+func TestFetchMsg(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	listener := testServer(cancel, testMessages...)
-
-	results := make(chan message)
-	output := func(msg message) {
-		results <- msg
-	}
+	listener := testServer(testMessages...)
 
 	addr := listener.Addr().String()
-	go dialLoop(ctx, addr, output)
 	for _, want := range testMessages {
-		got := <-results
-		if want != got {
+		got, err := fetchMsg(ctx, addr)
+		if err != nil {
+			t.Fatalf("unexpected error: `%s`", err)
+		}
+		if want != *got {
 			t.Errorf("message parse error; want: `%#v`, got: `%#v`", want, got)
 		}
 	}
 }
 
 // testServer runs a server to test against
-func testServer(cancel func(), tests ...message) net.Listener {
+func testServer(tests ...message) net.Listener {
 	ln, err := net.Listen("tcp", "localhost:0")
 	if err != nil {
 		panic(err)
@@ -53,7 +50,6 @@ func testServer(cancel func(), tests ...message) net.Listener {
 			io.Copy(conn, bytes.NewReader(bin))
 			conn.Close()
 		}
-		cancel()
 	}()
 	return ln
 }
