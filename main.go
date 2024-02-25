@@ -12,8 +12,7 @@ import (
 	"time"
 )
 
-// const Address = "data.salad.com:5000"
-var Address = "localhost:5000"
+var Address = "data.salad.com:5000"
 var maxBackoff = 7 // ~5 sec max w/ 100ms base
 var baseBackoff = time.Millisecond * 100
 

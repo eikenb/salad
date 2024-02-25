@@ -14,4 +14,4 @@ docker-run:
 	docker run -it --network=host --rm salad
 
 run:
-	go run .
+	env SERVER_ADDRESS="localhost:8888" go run .
