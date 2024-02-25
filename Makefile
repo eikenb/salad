@@ -15,3 +15,6 @@ docker-run:
 
 run:
 	env SERVER_ADDRESS="localhost:8888" go run .
+
+demo-run:
+	cd demo && go run .
