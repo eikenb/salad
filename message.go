@@ -85,7 +85,7 @@ func (m message) MarshalBinary() ([]byte, error) {
 	var err error
 	// header
 	msg := []byte{0x41, 0x49, 0x52}
-
+	// tail_number
 	tail_number_size := uint32(len(m.tail_number))
 	if msg, err = extendMsg(msg, tail_number_size); err != nil {
 		return nil, fmt.Errorf("tail_number_size: %w", err)
@@ -94,12 +94,12 @@ func (m message) MarshalBinary() ([]byte, error) {
 	if msg, err = extendMsg(msg, tail_number_value); err != nil {
 		return nil, fmt.Errorf("tail_number_value: %w", err)
 	}
-
+	// engine_count
 	engine_count := uint32(m.engine_count)
 	if msg, err = extendMsg(msg, engine_count); err != nil {
 		return nil, fmt.Errorf("engine_count: %w", err)
 	}
-
+	// engine_name
 	engine_name_size := uint32(len(m.engine_name))
 	if msg, err = extendMsg(msg, engine_name_size); err != nil {
 		return nil, fmt.Errorf("engine_name_size: %w", err)
@@ -108,22 +108,22 @@ func (m message) MarshalBinary() ([]byte, error) {
 	if msg, err = extendMsg(msg, engine_name_value); err != nil {
 		return nil, fmt.Errorf("engine_name_value: %w", err)
 	}
-
+	// latitude
 	latitude := m.latitude
 	if msg, err = extendMsg(msg, latitude); err != nil {
 		return nil, fmt.Errorf("latitude: %w", err)
 	}
-
+	// longitude
 	longitude := m.longitude
 	if msg, err = extendMsg(msg, longitude); err != nil {
 		return nil, fmt.Errorf("longitude: %w", err)
 	}
-
+	// altitude
 	altitude := m.altitude
 	if msg, err = extendMsg(msg, altitude); err != nil {
 		return nil, fmt.Errorf("altitude: %w", err)
 	}
-
+	// temperature
 	temperature := m.temperature
 	if msg, err = extendMsg(msg, temperature); err != nil {
 		return nil, fmt.Errorf("temperature: %w", err)
