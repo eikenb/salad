@@ -12,7 +12,7 @@ import (
 // close to the spec when there is one and it primarily uses snake_case.
 type message struct {
 	tail_number                                string
-	engine_count                               int
+	engine_count                               uint32
 	engine_name                                string
 	latitude, longitude, altitude, temperature float64
 }
@@ -49,7 +49,7 @@ func (m *message) UnmarshalBinary(data []byte) error {
 	if err := binary.Read(buf, order, &engine_count); err != nil {
 		return fmt.Errorf("engine_count: %w", err)
 	}
-	m.engine_count = int(engine_count)
+	m.engine_count = engine_count
 	// engine_name
 	size = 0
 	if err := binary.Read(buf, order, &size); err != nil {
@@ -95,7 +95,7 @@ func (m message) MarshalBinary() ([]byte, error) {
 		return nil, fmt.Errorf("tail_number_value: %w", err)
 	}
 	// engine_count
-	engine_count := uint32(m.engine_count)
+	engine_count := m.engine_count
 	if msg, err = extendMsg(msg, engine_count); err != nil {
 		return nil, fmt.Errorf("engine_count: %w", err)
 	}
